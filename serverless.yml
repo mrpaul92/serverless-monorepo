@@ -4,6 +4,7 @@ frameworkVersion: "4.4.11"
 plugins:
   - serverless-offline
   - serverless-prune-plugin
+  - serverless-webpack
   # - serverless-appsync-plugin
 
 provider:
@@ -22,9 +23,15 @@ package:
     - "!./**"
 
 custom:
+  default: ${file(./config/default.yml)}
   prune:
     automatic: true
     number: 1
+  webpack:
+    webpackConfig: webpack.config.js
+
+build:
+  esbuild: false
 
 functions:
   lambdaOne:
