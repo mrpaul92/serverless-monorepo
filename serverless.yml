@@ -1,0 +1,52 @@
+service: aws-node
+frameworkVersion: "4.4.11"
+
+plugins:
+  - serverless-offline
+  - serverless-prune-plugin
+  # - serverless-appsync-plugin
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  architecture: arm64
+  region: ${opt:region, 'ap-south-1'}
+  stage: ${opt:stage, 'dev'}
+  stackName: ${self:service}-${self:provider.stage}-stack
+  timeout: 45
+  memorySize: 640
+
+package:
+  individually: true
+  patterns:
+    - "!./**"
+
+custom:
+  prune:
+    automatic: true
+    number: 1
+
+functions:
+  lambdaOne:
+    name: ${self:service}-${self:provider.stage}-lambdaOne
+    description: "Lambda function for lambdaOne"
+    handler: src/lambdaOne/index.handler
+    environment:
+      env: ${self:provider.stage}
+      var: lambdaOne
+    package:
+      patterns:
+        - src/lambdaOne/**
+        - src/utils/**
+
+  lambdaTwo:
+    name: ${self:service}-${self:provider.stage}-lambdaTwo
+    description: "Lambda function for lambdaTwo"
+    handler: src/lambdaTwo/index.handler
+    environment:
+      env: ${self:provider.stage}
+      var: lambdaTwo
+    package:
+      patterns:
+        - src/lambdaTwo/**
+        - src/utils/**
