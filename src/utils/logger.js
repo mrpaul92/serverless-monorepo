@@ -1,13 +1,7 @@
-const pino = require("pino");
+const { createLogger, format, transports } = require("winston");
+const { combine, timestamp, json, printf } = format;
 
-/**
- * A reusable logger class for AWS Lambda.
- */
 export class Logger {
-  /**
-   * Creates an instance of LambdaLogger.
-   * @param {string} serviceName - Name of the service or Lambda function.
-   */
   constructor(serviceName) {
     this.serviceName = serviceName;
 
@@ -17,27 +11,31 @@ export class Logger {
     // Check if JSON logging is enabled via environment.
     const isJson = process.env.LOG_FORMAT === "json";
 
-    // Define the logger configuration.
-    this.logger = pino({
+    // Define the log format.
+    const logFormat = isJson
+      ? combine(
+          timestamp(),
+          json() // Use JSON format for structured logging.
+        )
+      : combine(
+          timestamp(),
+          printf(({ level, message, timestamp, service, meta }) => {
+            let log = `${timestamp} [${level}] [${service}] ${message}`;
+            if (meta && Object.keys(meta).length) {
+              log += ` | Meta: ${JSON.stringify(meta)}`;
+            }
+            return log;
+          })
+        );
+
+    // Initialize the logger.
+    this.logger = createLogger({
       level: logLevel,
-      base: { service: this.serviceName }, // Adds service name to every log entry
-      timestamp: pino.stdTimeFunctions.isoTime, // ISO timestamp
-      formatters: {
-        level: (label, number) => ({
-          level: number, // Keep numeric level
-          levelName: label, // Add string level name
-        }),
-      },
-      transport: !isJson
-        ? {
-            target: "pino-pretty", // Pretty print for development
-            options: {
-              colorize: true,
-              translateTime: true,
-              ignore: "pid,hostname", // Remove unnecessary fields
-            },
-          }
-        : undefined,
+      format: logFormat,
+      defaultMeta: { service: this.serviceName },
+      transports: [
+        new transports.Console(), // Logs to CloudWatch
+      ],
     });
   }
 
