@@ -39,8 +39,9 @@ functions:
     description: "Lambda function for lambdaOne"
     handler: src/lambdaOne/index.handler
     environment:
-      env: ${self:provider.stage}
-      var: lambdaOne
+      ENV: ${self:provider.stage}
+      LOG_LEVEL: ${self:custom.default.environments.${self:provider.stage}.LOG_LEVEL}
+      LOG_FORMAT: ${self:custom.default.environments.${self:provider.stage}.LOG_FORMAT}
     package:
       patterns:
         - src/lambdaOne/**
@@ -51,8 +52,9 @@ functions:
     description: "Lambda function for lambdaTwo"
     handler: src/lambdaTwo/index.handler
     environment:
-      env: ${self:provider.stage}
-      var: lambdaTwo
+      ENV: ${self:provider.stage}
+      LOG_LEVEL: ${self:custom.default.environments.${self:provider.stage}.LOG_LEVEL}
+      LOG_FORMAT: ${self:custom.default.environments.${self:provider.stage}.LOG_FORMAT}
     package:
       patterns:
         - src/lambdaTwo/**

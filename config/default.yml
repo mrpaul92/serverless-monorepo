@@ -1,1 +1,8 @@
 custom:
+environments:
+  dev:
+    LOG_LEVEL: debug
+    LOG_FORMAT: json
+  prod:
+    LOG_LEVEL: error
+    LOG_FORMAT: json
