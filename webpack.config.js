@@ -1,9 +1,9 @@
-const serverlessWebpack = require("serverless-webpack");
+const slsw = require("serverless-webpack");
 
 module.exports = {
   target: "node",
-  entry: serverlessWebpack.lib.entries,
-  mode: serverlessWebpack.lib.webpack.isLocal ? "development" : "production",
+  entry: slsw.lib.entries,
+  mode: slsw.lib.webpack.isLocal ? "development" : "production",
   node: false,
   optimization: {
     minimize: false,

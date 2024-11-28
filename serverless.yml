@@ -35,7 +35,7 @@ build:
 
 functions:
   lambdaOne:
-    name: ${self:service}-${self:provider.stage}-lambdaOne
+    name: ${self:service}-lambdaOne-${self:provider.stage}
     description: "Lambda function for lambdaOne"
     handler: src/lambdaOne/index.handler
     environment:
@@ -48,7 +48,7 @@ functions:
         - src/utils/**
 
   lambdaTwo:
-    name: ${self:service}-${self:provider.stage}-lambdaTwo
+    name: ${self:service}-lambdaTwo-${self:provider.stage}
     description: "Lambda function for lambdaTwo"
     handler: src/lambdaTwo/index.handler
     environment:
