@@ -1,0 +1,9 @@
+dev:
+  LOG_LEVEL: debug
+  LOG_FORMAT: json
+uat:
+  LOG_LEVEL: info
+  LOG_FORMAT: json
+prod:
+  LOG_LEVEL: error
+  LOG_FORMAT: json

@@ -2,5 +2,34 @@
 schema {
   query: Query
   mutation: Mutation
-  subscription: Subscription
+  # subscription: Subscription
+}
+
+enum TodoListStatus {
+  ACTIVE
+  INACTIVE
+}
+
+type TodoList {
+  id: ID!
+  title: String!
+  status: TodoListStatus!
+  createdAt: String!
+  updatedAt: String!
+}
+
+type Query @aws_api_key @aws_iam @aws_cognito_user_pools {
+  todoLists: [TodoList!]!
+  todoList(id: ID!): TodoList
+}
+
+type Mutation {
+  createTodoList(title: String!, status: TodoListStatus!): TodoList!
+    @aws_api_key
+    @aws_iam
+    @aws_cognito_user_pools
+  deleteTodoList(id: ID!): TodoList!
+    @aws_api_key
+    @aws_iam
+    @aws_cognito_user_pools
 }

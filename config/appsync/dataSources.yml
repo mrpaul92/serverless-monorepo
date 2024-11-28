@@ -1,0 +1,21 @@
+dataSources:
+  authDS:
+    type: AWS_LAMBDA
+    name: ${self:custom.base}-authDS
+    config:
+      functionArn: ${self:custom.lambda.auth.arn}
+      serviceRoleArn: !GetAtt [AppSyncRole, Arn]
+
+  exceptionHandlerDS:
+    type: AWS_LAMBDA
+    name: ${self:custom.base}-exceptionHandlerDS
+    config:
+      functionArn: ${self:custom.lambda.exception.arn}
+      serviceRoleArn: !GetAtt [AppSyncRole, Arn]
+
+  todoListDS:
+    type: AMAZON_DYNAMODB
+    name: ${self:custom.base}-todoListDS
+    config:
+      tableName: ${self:custom.dynamodb.todosTable}
+      serviceRoleArn: !GetAtt [AppSyncRole, Arn]
