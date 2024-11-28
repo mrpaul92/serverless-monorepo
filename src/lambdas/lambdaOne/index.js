@@ -1,5 +1,5 @@
 const axios = require("axios");
-const { Logger } = require("../utils/logger");
+const { Logger } = require("../../utils/logger");
 
 const logger = new Logger("LambdaOne");
 exports.handler = async (event) => {

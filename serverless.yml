@@ -37,7 +37,7 @@ functions:
   lambdaOne:
     name: ${self:service}-lambdaOne-${self:provider.stage}
     description: "Lambda function for lambdaOne"
-    handler: src/lambdaOne/index.handler
+    handler: src/lambdas/lambdaOne/index.handler
     environment:
       ENV: ${self:provider.stage}
       LOG_LEVEL: ${self:custom.default.environments.${self:provider.stage}.LOG_LEVEL}
@@ -50,7 +50,7 @@ functions:
   lambdaTwo:
     name: ${self:service}-lambdaTwo-${self:provider.stage}
     description: "Lambda function for lambdaTwo"
-    handler: src/lambdaTwo/index.handler
+    handler: src/lambdas/lambdaTwo/index.handler
     environment:
       ENV: ${self:provider.stage}
       LOG_LEVEL: ${self:custom.default.environments.${self:provider.stage}.LOG_LEVEL}
