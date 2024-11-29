@@ -1,0 +1,20 @@
+dev:
+  - type: AMAZON_COGNITO_USER_POOLS
+    config:
+      awsRegion: ${self:provider.region}
+      userPoolId: ${self:custom.base}-userPool
+      defaultAction: ALLOW
+  - type: API_KEY
+uat:
+  - type: AMAZON_COGNITO_USER_POOLS
+    config:
+      awsRegion: ${self:provider.region}
+      userPoolId: ${self:custom.base}-userPool
+      defaultAction: ALLOW
+  - type: API_KEY
+prod:
+  - type: AMAZON_COGNITO_USER_POOLS
+    config:
+      awsRegion: ${self:provider.region}
+      userPoolId: ${self:custom.base}-userPool
+      defaultAction: ALLOW

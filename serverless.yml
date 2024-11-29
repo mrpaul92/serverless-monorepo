@@ -59,27 +59,18 @@ custom:
       name: ${self:custom.base}-exception
       arn: ${self:custom.lambda.base.arn}:${self:custom.lambda.exception.name}
 
-  appsyncCognitoUserPoolAuthConfig:
-    type: AMAZON_COGNITO_USER_POOLS
-    config:
-      awsRegion: ${self:provider.region}
-      userPoolId: ${self:custom.base}-userPool
-      defaultAction: ALLOW
-
 appSync:
   name: ${self:custom.base}-appsync
   authentication:
     type: AWS_IAM
-  additionalAuthentications:
-    - ${self:custom.appsyncCognitoUserPoolAuthConfig}
-    - type: API_KEY
+  additionalAuthentications: ${file(./config/appsync/additionalAuthentications.yml):${self:provider.stage}}
   apiKeys:
-    - name: ${self:custom.base}-api-key
+    - name: ${self:custom.base}-appsync-api-key
   logging:
     enabled: true
-    level: "ALL"
+    level: ${self:custom.defaults.APPSYNC.LOG_LEVEL}
     cloudWatchLogsRoleArn: !GetAtt [AppSyncRole, Arn]
-  xrayEnabled: true
+  xrayEnabled: false
   dataSources: ${file(./config/appsync/dataSources.yml):dataSources}
   pipelineFunctions: ${file(./config/appsync/pipelineFunctions.yml):pipelineFunctions}
   resolvers: ${file(./config/appsync/resolvers.yml)}
@@ -93,8 +84,8 @@ functions:
     handler: src/lambdas/auth/index.handler
     environment:
       ENV: ${self:provider.stage}
-      LOG_LEVEL: ${self:custom.defaults.LOG_LEVEL}
-      LOG_FORMAT: ${self:custom.defaults.LOG_FORMAT}
+      LOG_LEVEL: ${self:custom.defaults.LAMBDA.LOG_LEVEL}
+      LOG_FORMAT: ${self:custom.defaults.LAMBDA.LOG_FORMAT}
     package:
       patterns:
         - src/auth/**
@@ -106,8 +97,8 @@ functions:
     handler: src/lambdas/exception/index.handler
     environment:
       ENV: ${self:provider.stage}
-      LOG_LEVEL: ${self:custom.defaults.LOG_LEVEL}
-      LOG_FORMAT: ${self:custom.defaults.LOG_FORMAT}
+      LOG_LEVEL: ${self:custom.defaults.LAMBDA.LOG_LEVEL}
+      LOG_FORMAT: ${self:custom.defaults.LAMBDA.LOG_FORMAT}
     package:
       patterns:
         - src/exception/**

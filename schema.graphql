@@ -23,13 +23,7 @@ type Query @aws_api_key @aws_iam @aws_cognito_user_pools {
   todoList(id: ID!): TodoList
 }
 
-type Mutation {
+type Mutation @aws_api_key @aws_iam @aws_cognito_user_pools {
   createTodoList(title: String!, status: TodoListStatus!): TodoList!
-    @aws_api_key
-    @aws_iam
-    @aws_cognito_user_pools
   deleteTodoList(id: ID!): TodoList!
-    @aws_api_key
-    @aws_iam
-    @aws_cognito_user_pools
 }

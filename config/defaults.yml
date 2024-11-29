@@ -1,9 +1,18 @@
 dev:
-  LOG_LEVEL: debug
-  LOG_FORMAT: json
+  LAMBDA:
+    LOG_LEVEL: debug
+    LOG_FORMAT: json
+  APPSYNC:
+    LOG_LEVEL: "ALL"
 uat:
-  LOG_LEVEL: info
-  LOG_FORMAT: json
+  LAMBDA:
+    LOG_LEVEL: info
+    LOG_FORMAT: json
+  APPSYNC:
+    LOG_LEVEL: "ERROR"
 prod:
-  LOG_LEVEL: error
-  LOG_FORMAT: json
+  LAMBDA:
+    LOG_LEVEL: error
+    LOG_FORMAT: json
+  APPSYNC:
+    LOG_LEVEL: "ERROR"
