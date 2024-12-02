@@ -1,5 +1,29 @@
+# version - 0.0.1
 schema {
   query: Query
   mutation: Mutation
-  subscription: Subscription
+  # subscription: Subscription
+}
+
+enum TodoListStatus {
+  ACTIVE
+  INACTIVE
+}
+
+type TodoList @aws_api_key @aws_iam @aws_cognito_user_pools {
+  id: ID!
+  title: String!
+  status: TodoListStatus!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}
+
+type Query @aws_api_key @aws_iam @aws_cognito_user_pools {
+  todoLists: [TodoList]!
+  todoList(id: ID!): TodoList
+}
+
+type Mutation @aws_api_key @aws_iam @aws_cognito_user_pools {
+  createTodoList(title: String!, status: TodoListStatus!): TodoList!
+  deleteTodoList(id: ID!): TodoList
 }

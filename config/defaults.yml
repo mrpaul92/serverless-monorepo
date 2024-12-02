@@ -1,0 +1,18 @@
+dev:
+  LAMBDA:
+    LOG_LEVEL: debug
+    LOG_FORMAT: json
+  APPSYNC:
+    LOG_LEVEL: "ALL"
+uat:
+  LAMBDA:
+    LOG_LEVEL: info
+    LOG_FORMAT: json
+  APPSYNC:
+    LOG_LEVEL: "ERROR"
+prod:
+  LAMBDA:
+    LOG_LEVEL: error
+    LOG_FORMAT: json
+  APPSYNC:
+    LOG_LEVEL: "ERROR"

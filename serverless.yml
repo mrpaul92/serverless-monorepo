@@ -5,55 +5,105 @@ plugins:
   - serverless-offline
   - serverless-prune-plugin
   - serverless-webpack
-  # - serverless-appsync-plugin
+  - serverless-appsync-plugin
 
-provider:
-  name: aws
-  runtime: nodejs20.x
-  architecture: arm64
-  region: ${opt:region, 'ap-south-1'}
-  stage: ${opt:stage, 'dev'}
-  stackName: ${self:service}-${self:provider.stage}-stack
-  timeout: 45
-  memorySize: 640
+build:
+  esbuild: false
 
 package:
   individually: true
   patterns:
     - "!./**"
 
+provider:
+  name: aws
+  runtime: nodejs20.x
+  architecture: arm64
+  region: ${opt:region, 'ap-south-1'}
+  stage: ${sls:stage, 'dev'}
+  stackName: ${self:service}-stack-${self:provider.stage}
+  timeout: 45
+  memorySize: 640
+  tracing:
+    apiGateway: true
+    lambda: true
+
 custom:
-  default: ${file(./config/default.yml)}
+  base: ${self:service}-${self:provider.stage}
+  defaults: ${file(./config/defaults.yml):${self:provider.stage}}
   prune:
     automatic: true
     number: 1
   webpack:
     webpackConfig: webpack.config.js
 
-build:
-  esbuild: false
+  # Dynamodb table names
+  dynamodb:
+    todosTable: ${self:custom.base}-Todos
+
+  # Layers
+  layers:
+    base: layer-${self:custom.base}
+    utils: ${self:custom.layers.base}-Utils
+
+  # Mapping of Lambda ARN
+  lambda:
+    # Base ARN
+    base:
+      arn: arn:aws:lambda:${self:provider.region}:${aws:accountId}:function
+    # Lambda Functions ARN here
+    auth:
+      name: ${self:custom.base}-auth
+      arn: ${self:custom.lambda.base.arn}:${self:custom.lambda.auth.name}
+    exception:
+      name: ${self:custom.base}-exception
+      arn: ${self:custom.lambda.base.arn}:${self:custom.lambda.exception.name}
+
+appSync:
+  name: ${self:custom.base}-appsync
+  authentication:
+    type: AWS_IAM
+  additionalAuthentications: ${file(./config/appsync/additionalAuthentications.yml):${self:provider.stage}}
+  apiKeys:
+    - name: ${self:custom.base}-appsync-api-key
+  logging:
+    enabled: true
+    level: ${self:custom.defaults.APPSYNC.LOG_LEVEL}
+    cloudWatchLogsRoleArn: !GetAtt [AppSyncRole, Arn]
+  xrayEnabled: false
+  dataSources: ${file(./config/appsync/dataSources.yml):dataSources}
+  pipelineFunctions: ${file(./config/appsync/pipelineFunctions.yml):pipelineFunctions}
+  resolvers: ${file(./config/appsync/resolvers.yml)}
+  environment:
+    ALLOW_MOCK_DATA: "true"
 
 functions:
-  lambdaOne:
-    name: ${self:service}-${self:provider.stage}-lambdaOne
-    description: "Lambda function for lambdaOne"
-    handler: src/lambdaOne/index.handler
+  auth:
+    name: ${self:custom.lambda.auth.name}
+    description: "Lambda function for Authentication"
+    handler: src/lambdas/auth/index.handler
     environment:
-      env: ${self:provider.stage}
-      var: lambdaOne
+      ENV: ${self:provider.stage}
+      LOG_LEVEL: ${self:custom.defaults.LAMBDA.LOG_LEVEL}
+      LOG_FORMAT: ${self:custom.defaults.LAMBDA.LOG_FORMAT}
     package:
       patterns:
-        - src/lambdaOne/**
+        - src/auth/**
         - src/utils/**
 
-  lambdaTwo:
-    name: ${self:service}-${self:provider.stage}-lambdaTwo
-    description: "Lambda function for lambdaTwo"
-    handler: src/lambdaTwo/index.handler
+  exception:
+    name: ${self:custom.lambda.exception.name}
+    description: "Lambda function for Exception Handling"
+    handler: src/lambdas/exception/index.handler
     environment:
-      env: ${self:provider.stage}
-      var: lambdaTwo
+      ENV: ${self:provider.stage}
+      LOG_LEVEL: ${self:custom.defaults.LAMBDA.LOG_LEVEL}
+      LOG_FORMAT: ${self:custom.defaults.LAMBDA.LOG_FORMAT}
     package:
       patterns:
-        - src/lambdaTwo/**
+        - src/exception/**
         - src/utils/**
+
+resources:
+  - ${file(./config/role.yml):resources}
+  - ${file(./config/dynamodb.yml):resources}

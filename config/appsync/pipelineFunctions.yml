@@ -1,0 +1,39 @@
+pipelineFunctions:
+  authResolver:
+    dataSource: authDS
+    description: "Authenticate user & return JWT Token"
+    code: ./src/appsync/resolvers/authResolver.js
+
+  exceptionHandlerResolver:
+    dataSource: exceptionHandlerDS
+    description: "Handle exception & errors"
+    code: ./src/appsync/resolvers/exceptionHandlerResolver.js
+
+  getTodoListsResolver:
+    dataSource: todoListDS
+    description: "Get Todo Lists"
+    code: ./src/appsync/resolvers/getTodoListsResolver.js
+    # Substitutions are like env variables accessibke in code by #varName#
+    substitutions:
+      todoListTable: ${self:custom.base}-todolist
+
+  getTodoListResolver:
+    dataSource: todoListDS
+    description: "Get Todo List by ID"
+    code: ./src/appsync/resolvers/getTodoListResolver.js
+    substitutions:
+      todoListTable: ${self:custom.base}-todolist
+
+  createTodoListResolver:
+    dataSource: todoListDS
+    description: "Create Todo List"
+    code: ./src/appsync/resolvers/createTodoListResolver.js
+    substitutions:
+      todoListTable: ${self:custom.base}-todolist
+
+  deleteTodoListResolver:
+    dataSource: todoListDS
+    description: "Delete Todo List"
+    code: ./src/appsync/resolvers/deleteTodoListResolver.js
+    substitutions:
+      todoListTable: ${self:custom.base}-todolist
