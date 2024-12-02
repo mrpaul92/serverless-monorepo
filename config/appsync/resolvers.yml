@@ -2,22 +2,22 @@ Query.todoLists:
   functions:
     - authResolver
     - getTodoListsResolver
-    - exceptionHandlerResolver
+    # - exceptionHandlerResolver
 
 Query.todoList:
   functions:
     - authResolver
     - getTodoListResolver
-    - exceptionHandlerResolver
+    # - exceptionHandlerResolver
 
 Mutation.createTodoList:
   functions:
     - authResolver
     - createTodoListResolver
-    - exceptionHandlerResolver
+    # - exceptionHandlerResolver
 
 Mutation.deleteTodoList:
   functions:
     - authResolver
     - deleteTodoListResolver
-    - exceptionHandlerResolver
+    # - exceptionHandlerResolver

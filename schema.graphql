@@ -10,20 +10,20 @@ enum TodoListStatus {
   INACTIVE
 }
 
-type TodoList {
+type TodoList @aws_api_key @aws_iam @aws_cognito_user_pools {
   id: ID!
   title: String!
   status: TodoListStatus!
-  createdAt: String!
-  updatedAt: String!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
 }
 
 type Query @aws_api_key @aws_iam @aws_cognito_user_pools {
-  todoLists: [TodoList!]!
+  todoLists: [TodoList]!
   todoList(id: ID!): TodoList
 }
 
 type Mutation @aws_api_key @aws_iam @aws_cognito_user_pools {
   createTodoList(title: String!, status: TodoListStatus!): TodoList!
-  deleteTodoList(id: ID!): TodoList!
+  deleteTodoList(id: ID!): TodoList
 }
